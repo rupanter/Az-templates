@@ -1,0 +1,169 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_westus",
+            "apiVersion": "2016-07-01",
+            "location": "westus"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_eastus",
+            "apiVersion": "2016-07-01",
+            "location": "eastus"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_northeurope",
+            "apiVersion": "2016-07-01",
+            "location": "northeurope"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_westeurope",
+            "apiVersion": "2016-07-01",
+            "location": "westeurope"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_eastasia",
+            "apiVersion": "2016-07-01",
+            "location": "eastasia"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_southeastasia",
+            "apiVersion": "2016-07-01",
+            "location": "southeastasia"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_northcentralus",
+            "apiVersion": "2016-07-01",
+            "location": "northcentralus"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_southcentralus",
+            "apiVersion": "2016-07-01",
+            "location": "southcentralus"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_centralus",
+            "apiVersion": "2016-07-01",
+            "location": "centralus"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_eastus2",
+            "apiVersion": "2016-07-01",
+            "location": "eastus2"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_japaneast",
+            "apiVersion": "2016-07-01",
+            "location": "japaneast"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_japanwest",
+            "apiVersion": "2016-07-01",
+            "location": "japanwest"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_brazilsouth",
+            "apiVersion": "2016-07-01",
+            "location": "brazilsouth"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_australiaeast",
+            "apiVersion": "2016-07-01",
+            "location": "australiaeast"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_australiasoutheast",
+            "apiVersion": "2016-07-01",
+            "location": "australiasoutheast"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_centralindia",
+            "apiVersion": "2016-07-01",
+            "location": "centralindia"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_southindia",
+            "apiVersion": "2016-07-01",
+            "location": "southindia"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_westindia",
+            "apiVersion": "2016-07-01",
+            "location": "westindia"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_canadacentral",
+            "apiVersion": "2016-07-01",
+            "location": "canadacentral"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_canadaeast",
+            "apiVersion": "2016-07-01",
+            "location": "canadaeast"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_westcentralus",
+            "apiVersion": "2016-07-01",
+            "location": "westcentralus"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_westus2",
+            "apiVersion": "2016-07-01",
+            "location": "westus2"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_ukwest",
+            "apiVersion": "2016-07-01",
+            "location": "ukwest"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_uksouth",
+            "apiVersion": "2016-07-01",
+            "location": "uksouth"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_koreacentral",
+            "apiVersion": "2016-07-01",
+            "location": "koreacentral"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_koreasouth",
+            "apiVersion": "2016-07-01",
+            "location": "koreasouth"
+        },
+        {
+            "type": "Microsoft.Network/networkWatchers",
+            "name": "NetworkWatcher_francecentral",
+            "apiVersion": "2016-07-01",
+            "location": "francecentral"
+        }
+    ]
+}
