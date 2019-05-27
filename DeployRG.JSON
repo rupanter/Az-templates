@@ -1,0 +1,97 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.1",
+  "parameters": {
+    "ResourceGroupName": {
+      "type": "string"
+    },
+    "workspaceName": {
+      "type": "string"
+    },
+    "automationAccountName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "AutomationDetails": "[Concat(Subscription().id, '/resourceGroups/', parameters('ResourceGroupName'), '/providers/Microsoft.Automation/automationAccounts/')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2018-05-01",
+      "location": "[deployment().location]",
+      "name": "[parameters('ResourceGroupName')]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-05-01",
+      "name": "WorkspaceandAutomationDeployment",
+      "resourceGroup": "[parameters('ResourceGroupName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/resourceGroups/', parameters('ResourceGroupName'))]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "apiVersion": "2015-10-31",
+              "location": "[deployment().location]",
+              "name": "[parameters('AutomationAccountName')]",
+              "type": "Microsoft.Automation/automationAccounts",
+              "properties": {
+                "sku": {
+                  "name": "Basic"
+                }
+              }
+            },
+            {
+              "apiVersion": "2017-03-15-preview",
+              "location": "[deployment().location]",
+              "name": "[parameters('workspaceName')]",
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "properties": {
+                "sku": {
+                  "name": "PerGB2018"
+                }
+              },
+              "resources": [
+                {
+                  "name": "AzureActivityLog",
+                  "type": "dataSources",
+                  "apiVersion": "2015-11-01-preview",
+                  "dependsOn": [
+                    "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                  ],
+                  "kind": "AzureActivityLog",
+                  "properties": {
+                    "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
+                  }
+                },
+                {
+                  "name": "Automation",
+                  "type": "linkedServices",
+                  "apiVersion": "2015-11-01-preview",
+                  "dependsOn": [
+                    "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                    "[concat(variables('AutomationDetails'), parameters('AutomationAccountName'))]"
+                  ],
+                  "properties": {
+                    "resourceId": "[concat(variables('AutomationDetails'), parameters('AutomationAccountName'))]"
+                  }
+                }
+              ]
+            }
+          ],
+          "outputs": {}
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
