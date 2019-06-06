@@ -6,6 +6,11 @@
           "field": "Microsoft.Compute/virtualMachines/extensions/settings.workspaceId",
           "equals": "[parameters('workspaceId')]"
         }
+      },
+
+      {
+        "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+        "equals": "Microsoft.EnterpriseCloud.Monitoring"
       }
     ]
   },
