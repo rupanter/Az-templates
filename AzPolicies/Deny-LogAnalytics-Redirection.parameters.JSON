@@ -1,0 +1,9 @@
+{
+  "WorkspaceID": {
+    "Type": "String",
+    "metadata": {
+      "displayName": "Log Analytics workspace",
+      "description": "Name of the workspace, such as 'production'"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "if": {
+    "allOf": [
+      {
+        "not": {
+          "field": "Microsoft.Compute/virtualMachines/extensions/settings.workspaceId",
+          "equals": "[parameters('workspaceId')]"
+        }
+      }
+    ]
+  },
+  "then": {
+    "effect": "deny"
+  }
+}

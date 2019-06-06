@@ -9,7 +9,6 @@
         "field": "[concat('tags[', parameters('tagName'), ']')]",
         "exists": "True"
       },
-
       {
         "allOf": [
           {
