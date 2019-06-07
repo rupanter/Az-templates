@@ -1,0 +1,220 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalytics": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Log Analytics workspace",
+        "description": "Select Log Analytics workspace from dropdown list. If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID.",
+        "strongType": "omsWorkspace",
+        "assignPermissions": true
+      }
+    },
+    "tagName": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Tag Name",
+        "description": "Name of the tag, such as 'production'"
+      }
+    },
+    "rbacGuid": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "metadata": {
+        "description": "Generates a GUID during deployment runtime to assign RBAC"
+      }
+    }
+  },
+  "variables": {
+    "policyDefinitionName": "AME-MMAInstallation-WindowsVMs-Policy",
+    "policyAssignmentName": "AME-MMAInstallation-WindowsVMs-Assignment",
+    "rbacContributor": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "apiVersion": "2018-05-01",
+      "name": "[variables('policyDefinitionName')]",
+      "properties": {
+        "DisplayName": "[[Concat(variables('policyDefinitionName'),'Policy')]",
+        "mode": "All",
+        "policyType": "Custom",
+        "parameters": {
+          "logAnalytics": {
+            "type": "String",
+            "metadata": {
+              "displayName": "Log Analytics workspace",
+              "description": "Select Log Analytics workspace from dropdown list. If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID.",
+              "strongType": "omsWorkspace",
+              "assignPermissions": true
+            }
+          },
+          "tagName": {
+            "type": "String",
+            "metadata": {
+              "displayName": "Tag Name",
+              "description": "Name of the tag, such as 'production'"
+            }
+          }
+        },
+        "PolicyRule": {
+          "if": {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Compute/virtualMachines"
+              },
+              {
+                "field": "[[concat('tags[', parameters('tagName'), ']')]",
+                "equals": "Windows"
+              }
+            ]
+          },
+          "then": {
+            "effect": "deployIfNotExists",
+            "details": {
+              "type": "Microsoft.Compute/virtualMachines/extensions",
+              "roleDefinitionIds": [
+                "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+              ],
+              "existenceCondition": {
+                "allOf": [
+                  {
+                    "field": "Microsoft.Compute/virtualMachines/extensions/type",
+                    "equals": "MicrosoftMonitoringAgent"
+                  },
+                  {
+                    "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+                    "equals": "Microsoft.EnterpriseCloud.Monitoring"
+                  },
+                  {
+                    "field": "Microsoft.Compute/virtualMachines/extensions/provisioningState",
+                    "equals": "Succeeded"
+                  }
+                ]
+              },
+              "deployment": {
+                "properties": {
+                  "mode": "incremental",
+                  "parameters": {
+                    "vmName": {
+                      "value": "[[field('name')]"
+                    },
+                    "location": {
+                      "value": "[[field('location')]"
+                    },
+                    "logAnalytics": {
+                      "value": "[[parameters('logAnalytics')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                      "vmName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "logAnalytics": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "name": "[[concat(parameters('vmName'), '/MicrosoftMonitoringAgent')]",
+                        "type": "Microsoft.Compute/virtualMachines/extensions",
+                        "location": "[[parameters('location')]",
+                        "apiVersion": "2018-06-01",
+                        "properties": {
+                          "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                          "type": "MicrosoftMonitoringAgent",
+                          "typeHandlerVersion": 1.0,
+                          "autoUpgradeMinorVersion": true,
+                          "settings": {
+                            "workspaceId": "[[reference(parameters('logAnalytics'), '2015-03-20').customerId]",
+                            "stopOnMultipleConnections": "true"
+                          },
+                          "protectedSettings": {
+                            "workspaceKey": "[[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('loganalytics')), '2015-03-20').primarySharedKey]"
+                          }
+                        }
+                      }
+                    ],
+                    "outputs": {
+                      "policy": {
+                        "type": "string",
+                        "value": "[[concat('Enabled extension for VM', ': ', parameters('vmName'))]"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "apiVersion": "2018-05-01",
+      "name": "[variables('policyAssignmentName')]",
+      "location": "[deployment().location]",
+      "dependsOn": ["[variables('policyDefinitionName')]"],
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "description": "[variables('policyAssignmentName')]",
+        "displayName": "[variables('policyAssignmentName')]",
+        "scope": "[subscription().id]",
+        "policyDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/policyDefinitions/', variables('policyDefinitionName'))]",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalytics')]"
+          },
+          "tagName": {
+            "value": "[parameters('tagName')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-05-01",
+      "location": "[deployment().location]",
+      "name": "[concat('builtInDelay', copyIndex())]",
+      "dependsOn": ["[variables('policyAssignmentName')]"],
+      "copy": {
+        "name": "builtInDelayCopy",
+        "count": 5,
+        "mode": "Serial",
+        "batchSize": 1
+      },
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [],
+          "outputs": {}
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2017-09-01",
+      "name": "[parameters('rbacGuid')]",
+      "dependsOn": ["builtInDelayCopy", "[variables('policyAssignmentName')]"],
+      "properties": {
+        "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+        "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentName')), '2018-05-01', 'Full' ).identity.principalId)]"
+      }
+    }
+  ],
+  "outputs": {}
+}
