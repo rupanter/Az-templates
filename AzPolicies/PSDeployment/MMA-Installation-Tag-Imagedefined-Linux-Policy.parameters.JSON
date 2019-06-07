@@ -14,5 +14,12 @@
       "displayName": "Tag Name",
       "description": "Name of the tag, such as 'production'"
     }
+  },
+  "WorkspaceID": {
+    "Type": "String",
+    "metadata": {
+      "displayName": "Log Analytics workspace",
+      "description": "Name of the workspace, such as 'production'"
+    }
   }
 }
