@@ -16,7 +16,7 @@
         "alertStatus": "[parameters('enablecheck')]",
         "alertSource": {
             "Query": "[parameters('Query')]",
-            "SourceId": "/subscriptions/adcafcc3-4682-44d3-9e5b-e1e44ecf4f1a/resourceGroups/dr/providers/microsoft.insights/components/sumitloganalytics",
+            "SourceId": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/components/BasictestingOMS",
             "Type": "ResultCount"
         },
         "alertSchedule": {
@@ -31,7 +31,7 @@
             "Threshold": "0"
         },
         "actionGrp": {
-            "ActionGroup": "/subscriptions/adcafcc3-4682-44d3-9e5b-e1e44ecf4f1a/resourceGroups/Default-ActivityLogAlerts/providers/microsoft.insights/actiongroups/RestoreComplete-StartingCleanUp",
+            "ActionGroup": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/actiongroups/Rupanter",
             "Subject": "RestoreJobStatus"
         }
     },
