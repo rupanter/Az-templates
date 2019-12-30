@@ -31,7 +31,7 @@
             "Threshold": "0"
         },
         "actionGrp": {
-            "ActionGroup": "/subscriptions/adcafcc3-4682-44d3-9e5b-e1e44ecf4f1a/resourceGroups/dr/providers/microsoft.insights/scheduledqueryrules/RestoreComplete-StartingCleanUp",
+            "ActionGroup": "/subscriptions/adcafcc3-4682-44d3-9e5b-e1e44ecf4f1a/resourceGroups/NetworkWatcherRG/providers/Microsoft.OperationalInsights/workspaces/VMstartSolution",
             "Subject": "RestoreJobStatus"
         }
     },
