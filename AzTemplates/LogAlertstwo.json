@@ -6,7 +6,7 @@
             "type": "string"
         },
         "enablecheck": {
-            "type": "string"
+            "type": "bool"
         }
     },
     "variables": {
