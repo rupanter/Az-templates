@@ -16,7 +16,7 @@
         "alertStatus": "[parameters('enablecheck')]",
         "alertSource": {
             "Query": "[parameters('Query')]",
-            "SourceId": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.OperationalInsights/workspaces/BasictestingOMS",
+            "SourceId": "/subscriptions/adcafcc3-4682-44d3-9e5b-e1e44ecf4f1a/resourceGroups/DR/providers/Microsoft.OperationalInsights/workspaces/SumitLogAnalytics",
             "Type": "ResultCount"
         },
         "alertSchedule": {
@@ -31,7 +31,7 @@
             "Threshold": "0"
         },
         "actionGrp": {
-            "ActionGroup": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/actiongroups/Rupanter",
+            "ActionGroup": "/subscriptions/adcafcc3-4682-44d3-9e5b-e1e44ecf4f1a/resourceGroups/dr/providers/microsoft.insights/scheduledqueryrules/RestoreComplete-StartingCleanUp",
             "Subject": "RestoreJobStatus"
         }
     },
