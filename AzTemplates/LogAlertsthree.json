@@ -1,0 +1,71 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Query": {
+            "type": "string"
+        },
+        "enablecheck": {
+            "type": "bool"
+        }
+    },
+    "variables": {
+        "alertLocation": "EastUS",
+        "alertName": "RestoreStatusCheck",
+        "alertDescription": "Check the status of backup job",
+        "alertStatus": "[parameters('enablecheck')]",
+        "alertSource": {
+            "Query": "[parameters('Query')]",
+            "SourceId": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/components/BasictestingOMS",
+            "Type": "ResultCount"
+        },
+        "alertSchedule": {
+            "Frequency": 5,
+            "Time": 5
+        },
+        "alertActions": {
+            "SeverityLevel": "3"
+        },
+        "alertTrigger": {
+            "Operator": "GreaterThan",
+            "Threshold": "0"
+        },
+        "actionGrp": {
+            "ActionGroup": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/actiongroups/Rupanter",
+            "Subject": "RestoreJobStatus"
+        }
+    },
+    "resources": [
+        {
+            "name": "[variables('alertName')]",
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "apiVersion": "2018-04-16",
+            "location": "[variables('alertLocation')]",
+            "properties": {
+                "description": "[variables('alertDescription')]",
+                "enabled": "[variables('alertStatus')]",
+                "source": {
+                    "query": "[variables('alertSource').Query]",
+                    "dataSourceId": "[variables('alertSource').SourceId]",
+                    "queryType": "[variables('alertSource').Type]"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertSchedule').Frequency]",
+                    "timeWindowInMinutes": "[variables('alertSchedule').Time]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertActions').SeverityLevel]",
+                    "aznsAction": {
+                        "actionGroup": "[array(variables('actionGrp').ActionGroup)]",
+                        "emailSubject": "[variables('actionGrp').Subject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertTrigger').Operator]",
+                        "threshold": "[variables('alertTrigger').Threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}
