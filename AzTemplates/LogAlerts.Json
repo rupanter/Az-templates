@@ -4,13 +4,16 @@
     "parameters": {
         "Query": {
             "type": "string"
+        },
+        "EnableCheck": {
+            "type": "string"
         }
     },
     "variables": {
         "alertLocation": "EastUS",
         "alertName": "RestoreStatusCheck",
         "alertDescription": "Check the status of backup job",
-        "alertStatus": "true",
+        "alertStatus": "[parameters('EnableCheck')]",
         "alertSource": {
             "Query": "[parameters('Query')]",
             "SourceId": "/subscriptions/adcafcc3-4682-44d3-9e5b-e1e44ecf4f1a/resourceGroups/dr/providers/microsoft.insights/components/sumitloganalytics",
