@@ -16,7 +16,7 @@
         "alertStatus": "[parameters('enablecheck')]",
         "alertSource": {
             "Query": "[parameters('Query')]",
-            "SourceId": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/components/BasictestingOMS",
+            "SourceId": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.OperationalInsights/workspaces/BasictestingOMS",
             "Type": "ResultCount"
         },
         "alertSchedule": {
