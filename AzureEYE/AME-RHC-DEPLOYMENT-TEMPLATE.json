@@ -4,7 +4,7 @@
     "parameters": {
         "ActionGroupId": {
             "type": "string",
-            "defaultValue": "/subscriptions/03023f06-6cc2-4203-b952-ef6c3cc74a25/resourceGroups/Basictesting/providers/microsoft.insights/actiongroups/AME-CWL"
+            "defaultValue": "/subscriptions/9ef102be-8e69-43a4-b2bb-63ec3670b7d2/resourceGroups/Default-Activitylogalerts/providers/microsoft.insights/actiongroups/AzureEye"
         },
         "CustomerShortName": {
             "type": "string",
