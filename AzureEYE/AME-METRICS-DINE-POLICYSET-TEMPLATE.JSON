@@ -1,0 +1,143 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "scope": {
+            "type": "string",
+            "defaultvalue": "[subscription().id]",
+            "metadata": {
+                "displayname": "ResourceID of Scope"
+            }
+        },
+        "rbacGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]",
+            "metadata": {
+                "description": "Generates a GUID during deployment runtime to assign RBAC"
+            }
+        },
+        "CopyGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]",
+            "metadata": {
+                "description": "Generates a GUID during deployment runtime to assign RBAC"
+            }
+        }
+    },
+    "variables": {
+        "policyInitiativeName": "AzureEYE-METRIC-ALERTS-POLICYSET",
+        "policyAssignmentName": "AzureEYE-METRIC-ALERT-POLICYSET-Assignment",
+        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policySetDefinitions/",
+            "apiVersion": "2018-03-01",
+            "name": "[variables('policyInitiativeName')]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "displayName": "AME Monitoring Initiative for Metric Alerts",
+                "description": "Policy initiative which will enable Metric Alerts for AME Monitoring Stamp",
+                "policyDefinitions": [
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-VM-SPIKE-DINE-METRICALERT')]"
+                    },
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-STR-AVAIL-DINE-METRICALERT')]"
+                    },
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-SQL-CON-FAIL-DINE-METRICALERT')]"
+                    },
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-SQL-CPU-DINE-METRICALERT')]"
+                    },
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-SQL-DATA-IO-DINE-METRICALERT')]"
+                    },
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-SQL-DLOCK-DINE-METRICALERT')]"
+                    },
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-SQL-DTU-DINE-METRICALERT')]"
+                    },
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-LB-VIP-AVAIL-DINE-METRICALERT')]"
+                    },
+                    {
+                        "policyDefinitionId": "[subscriptionresourceId('Microsoft.Authorization/policyDefinitions/', 'AME-LB-DIP-AVAIL-DINE-METRICALERT')]"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentName')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyInitiativeName')]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "AzureEYE-METRIC-ALERT-POLICYSET-Assignment",
+                "displayName": "AzureEYE-METRIC-ALERT-POLICYSET",
+                "scope": "[parameters('scope')]",
+                "policyDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/policySetDefinitions/', variables('policyInitiativeName'))]",
+                "parameters": {
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "[concat('builtInDelay', copyIndex(), uniqueString(parameters('CopyGuid')))]",
+            "dependsOn": [
+                "[variables('policyAssignmentName')]"
+            ],
+            "copy": {
+                "name": "builtInDelayCopy",
+                "count": 10,
+                "mode": "Serial",
+                "batchSize": 1
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                    },
+                    "variables": {
+                    },
+                    "resources": [
+                    ],
+                    "outputs": {
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[parameters('rbacGuid')]",
+            "dependsOn": [
+                "builtInDelayCopy",
+                "[variables('policyAssignmentName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+                "principalType": "ServicePrincipal",
+                "delegatedManagedIdentityResourceId": "[concat(subscription().id, '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentName'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentName')), '2018-05-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {
+    },
+    "functions": [
+    ]
+}
