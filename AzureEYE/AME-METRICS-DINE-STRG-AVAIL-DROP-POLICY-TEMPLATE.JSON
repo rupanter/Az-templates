@@ -1,0 +1,335 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/subscriptiondeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+        "policyDefinitionName": "AME-STR-AVAIL-DINE-METRICALERT"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyDefinitionName')]",
+            "properties": {
+                "DisplayName": "[Concat(variables('policyDefinitionName'),'Policy')]",
+                "mode": "All",
+                "policyType": "Custom",
+                "parameters": {
+                    "tagName": {
+                        "type": "string",
+                        "defaultValue": "environment",
+                        "metadata": {
+                            "displayName": "Tag Name",
+                            "description": "Name of the tag, such as 'production'"
+                        }
+                    },
+
+                    "tagValue": {
+                        "type": "string",
+                        "defaultValue": "production",
+                        "metadata": {
+                            "displayName": "Tag Value",
+                            "description": "Value of the tag, such as 'production' against which Policy will match the values"
+                        }
+                    },
+
+                    "metricName": {
+                        "type": "string",
+                        "defaultValue": "Availability",
+                        "metadata": {
+                            "displayName": "Metric name",
+                            "description": "The metric name that an alert rule must be enabled on"
+                        }
+                    },
+                    "isEnabled": {
+                        "type": "string",
+                        "defaultValue": "True",
+                        "metadata": {
+                            "description": "Specifies whether the alert is enabled"
+                        }
+                    },
+                    "Threshold": {
+                        "type": "string",
+                        "defaultValue": "97"
+                    },
+                    "operator": {
+                        "type": "string",
+                        "defaultValue": "LessThan",
+                        "allowedValues": [
+                            "Equals",
+                            "NotEquals",
+                            "GreaterThan",
+                            "GreaterThanOrEqual",
+                            "LessThan",
+                            "LessThanOrEqual"
+                        ],
+                        "metadata": {
+                            "description": "Operator comparing the current value with the threshold value."
+                        }
+                    },
+                    "timeAggregation": {
+                        "type": "string",
+                        "defaultValue": "Average",
+                        "allowedValues": [
+                            "Average",
+                            "Minimum",
+                            "Maximum",
+                            "Total",
+                            "Count"
+                        ],
+                        "metadata": {
+                            "description": "How the data that is collected should be combined over time."
+                        }
+                    },
+                    "windowSize": {
+                        "type": "string",
+                        "defaultValue": "PT15M",
+                        "allowedValues": [
+                            "PT1M",
+                            "PT5M",
+                            "PT15M",
+                            "PT30M",
+                            "PT1H",
+                            "PT6H",
+                            "PT12H",
+                            "PT24H"
+                        ],
+                        "metadata": {
+                            "description": "Period of time used to monitor alert activity based on the threshold. Must be between one minute and one day. ISO 8601 duration format."
+                        }
+                    },
+                    "evaluationFrequency": {
+                        "type": "string",
+                        "defaultValue": "PT15M",
+                        "allowedValues": [
+                            "PT1M",
+                            "PT5M",
+                            "PT15M",
+                            "PT30M"
+                        ],
+                        "metadata": {
+                            "description": "how often the metric alert is evaluated represented in ISO 8601 duration format"
+                        }
+                    },
+                    "CustomerShortName": {
+                        "type": "string",
+                        "defaultValue": "Nuance"
+                    },
+                    "actionGroupId": {
+                        "type": "string",
+                        "defaultValue": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/actiongroups/PolicyAG",
+                        "metadata": {
+                            "description": "The ID of the action group that is triggered when the alert is activated or deactivated"
+                        }
+                    }
+                },
+                "PolicyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Storage/storageAccounts"
+                            },
+                            {
+                                "field": "[[concat('tags[', parameters('tagName'), ']')]",
+                                "equals": "[[parameters('tagValue')]"
+                            },
+                            {
+                                "field": "location",
+                                "equals": "eastus"
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "deployIfNotExists",
+                        "details": {
+                            "type": "Microsoft.Insights/metricalerts",
+                            "roleDefinitionIds": [
+                                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                            ],
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Insights/metricalerts/Enabled",
+                                        "equals": "true"
+                                    },
+                                    {
+                                        "field": "name",
+                                        "equals": "[[concat('AME_',parameters('CustomerShortName'),'_STRG_AVAIL_DROP_',field('name'))]"
+                                    },
+                                    {
+                                        "field": "Microsoft.Insights/metricalerts/scopes[*]",
+                                        "equals": "[[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Storage/storageAccounts/', field('Name'))]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "properties": {
+                                    "mode": "incremental",
+                                    "parameters": {
+                                        "StrName": {
+                                            "value": "[[field('name')]"
+                                        },
+                                        "metricName": {
+                                            "value": "[[parameters('metricName')]"
+                                        },
+                                        "isEnabled": {
+                                            "value": "[[parameters('isEnabled')]"
+                                        },
+                                        "Threshold": {
+                                            "value": "[[parameters('Threshold')]"
+                                        },
+                                        "operator": {
+                                            "value": "[[parameters('operator')]"
+                                        },
+                                        "timeAggregation": {
+                                            "value": "[[parameters('timeAggregation')]"
+                                        },
+                                        "windowSize": {
+                                            "value": "[[parameters('windowSize')]"
+                                        },
+                                        "evaluationFrequency": {
+                                            "value": "[[parameters('evaluationFrequency')]"
+                                        },
+                                        "CustomerShortName": {
+                                            "value": "[[parameters('CustomerShortName')]"
+                                        },
+                                        "actionGroupId": {
+                                            "value": "[[parameters('actionGroupId')]"
+                                        }
+                                    },
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "StrName": {
+                                                "type": "string"
+                                            },
+                                            "metricName": {
+                                                "type": "String"
+                                            },
+                                            "isEnabled": {
+                                                "type": "string"
+                                            },
+                                            "Threshold": {
+                                                "type": "string"
+                                            },
+                                            "operator": {
+                                                "type": "string",
+                                                "allowedValues": [
+                                                    "Equals",
+                                                    "NotEquals",
+                                                    "GreaterThan",
+                                                    "GreaterThanOrEqual",
+                                                    "LessThan",
+                                                    "LessThanOrEqual"
+                                                ],
+                                                "metadata": {
+                                                    "description": "Operator comparing the current value with the threshold value."
+                                                }
+                                            },
+                                            "timeAggregation": {
+                                                "type": "string",
+                                                "allowedValues": [
+                                                    "Average",
+                                                    "Minimum",
+                                                    "Maximum",
+                                                    "Total",
+                                                    "Count"
+                                                ],
+                                                "metadata": {
+                                                    "description": "How the data that is collected should be combined over time."
+                                                }
+                                            },
+                                            "windowSize": {
+                                                "type": "string",
+                                                "allowedValues": [
+                                                    "PT1M",
+                                                    "PT5M",
+                                                    "PT15M",
+                                                    "PT30M",
+                                                    "PT1H",
+                                                    "PT6H",
+                                                    "PT12H",
+                                                    "PT24H"
+                                                ],
+                                                "metadata": {
+                                                    "description": "Period of time used to monitor alert activity based on the threshold. Must be between one minute and one day. ISO 8601 duration format."
+                                                }
+                                            },
+                                            "evaluationFrequency": {
+                                                "type": "string",
+                                                "allowedValues": [
+                                                    "PT1M",
+                                                    "PT5M",
+                                                    "PT15M",
+                                                    "PT30M"
+                                                ],
+                                                "metadata": {
+                                                    "description": "how often the metric alert is evaluated represented in ISO 8601 duration format"
+                                                }
+                                            },
+                                            "CustomerShortName": {
+                                                "type": "string"
+                                            },
+                                            "actionGroupId": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "variables": {
+                                        },
+                                        "resources": [
+                                            {
+                                                "name": "[[concat('AME_',parameters('CustomerShortName'),'_STRG_AVAIL_DROP_',parameters('StrName'))]",
+                                                "tags": {
+                                                },
+                                                "properties": {
+                                                    "windowsize": "[[parameters('windowsize')]",
+                                                    "criteria": {
+                                                        "AllOf": [
+                                                            {
+                                                                "metricname": "[[parameters('metricName')]",
+                                                                "Dimensions": [
+                                                                ],
+                                                                "name": "1st criterion\u0027",
+                                                                "threshold": "[[parameters('Threshold')]",
+                                                                "Operator": "[[parameters('Operator')]",
+                                                                "TimeAggregation": "[[parameters('TimeAggregation')]"
+                                                            }
+                                                        ],
+                                                        "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "actionGroupId": "[[parameters('actionGroupId')]"
+                                                        }
+                                                    ],
+                                                    "description": "[[concat('AME_',parameters('CustomerShortName'),'_STRG_AVAIL_DROP_',parameters('StrName'))]",
+                                                    "scopes": [
+                                                        "[[concat('/subscriptions/',subscription().subscriptionId,'/resourcegroups/',resourceGroup().name,'/providers/Microsoft.Storage/storageAccounts/',parameters('StrName'))]"
+                                                    ],
+                                                    "severity": 4,
+                                                    "Enabled": "[[parameters('isEnabled')]",
+                                                    "EvaluationFrequency": "[[parameters('evaluationFrequency')]"
+                                                },
+                                                "type": "Microsoft.Insights/metricAlerts",
+                                                "apiVersion": "2018-03-01",
+                                                "location": "global"
+                                            }
+                                        ],
+                                        "outputs": {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    ],
+    "outputs": {
+    }
+}
