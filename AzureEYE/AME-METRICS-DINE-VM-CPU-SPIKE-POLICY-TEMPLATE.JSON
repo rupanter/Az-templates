@@ -116,7 +116,7 @@
                     },
                     "actionGroupId": {
                         "type": "string",
-                        "defaultValue": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/actiongroups/PolicyAG",
+                        "defaultValue": "/subscriptions/9ef102be-8e69-43a4-b2bb-63ec3670b7d2/resourceGroups/Default-Activitylogalerts/providers/microsoft.insights/actiongroups/AzureEye",
                         "metadata": {
                             "description": "The ID of the action group that is triggered when the alert is activated or deactivated"
                         }

@@ -1,0 +1,265 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/subscriptiondeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ActionGroupName": {
+            "type": "string",
+            "defaultValue": "AzureEYE-AG",
+            "metadata": {
+                "displayName": "Action Group Name",
+                "description": "Name of the Action Group, such as 'production-RG'"
+            }
+        },
+        "EmailAddress": {
+            "type": "string",
+            "defaultvalue": "noc@nuancehealthops.mygbiz.com",
+            "metadata": {
+                "displayName": "EmailID of Reciever",
+                "description": "Email Address of recievers"
+            }
+        },
+        "rgName": {
+            "type": "string",
+            "defaultvalue": "AME-Demo"
+        },
+        "rbacGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]",
+            "metadata": {
+                "description": "Generates a GUID during deployment runtime to assign RBAC"
+            }
+        },
+        "CopyGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]",
+            "metadata": {
+                "description": "Generates a GUID during deployment runtime to assign RBAC"
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitionName": "AzureEYE-AG-DINE-POLICY",
+        "policyAssignmentName": "AzureEYE-AG-DINE-ASSIGNMENT",
+        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyDefinitionName')]",
+            "properties": {
+                "DisplayName": "[Concat(variables('policyDefinitionName'),'Policy')]",
+                "mode": "All",
+                "policyType": "Custom",
+                "parameters": {
+                    "ActionGroupName": {
+                        "type": "String",
+                        "defaultValue": "AzureEYE-AG",
+                        "metadata": {
+                            "displayName": "Tag Name",
+                            "description": "Name of the tag, such as 'production'"
+                        }
+                    },
+                    "EmailAddress": {
+                        "type": "string",
+                        "defaultvalue": "noc@nuancehealthops.mygbiz.com",
+                        "metadata": {
+                            "displayName": "emailaddress where you want the alert to go",
+                            "description": "Email address of the alert receiver"
+                        }
+                    },
+                    "rgName": {
+                        "type": "string",
+                        "defaultvalue": "AME-Demo"
+                    }
+                },
+                "PolicyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                    },
+                    "then": {
+                        "effect": "deployIfNotExists",
+                        "details": {
+                            "type": "Microsoft.Insights/actionGroups",
+                            "roleDefinitionIds": [
+                                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                            ],
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.Insights/actionGroups"
+                                    },
+                                    {
+                                        "field": "name",
+                                        "equals": "[[parameters('ActionGroupName')]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "properties": {
+                                    "mode": "incremental",
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "ActionGroupName": {
+                                                "type": "string",
+                                                "defaultValue": "AzureEYE-AG"
+                                            },
+                                            "EmailAddress": {
+                                                "type": "string",
+                                                "defaultValue": "noc@nuancehealthops.mygbiz.com"
+                                            },
+                                            "rgName": {
+                                                "type": "string",
+                                                "defaultvalue": "AME-Demo"
+                                            }
+                                        },
+                                        "variables": {
+                                        },
+                                        "resources": [
+                                            {
+                                                "type": "Microsoft.Resources/deployments",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[concat('AzureEYE-AG-Deployment', uniqueString('foo'))]",
+                                                "resourceGroup": "[[parameters('rgName')]",
+                                                "properties": {
+                                                    "mode": "Incremental",
+                                                    "template": {
+                                                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                                                        "contentVersion": "1.0.0.0",
+                                                        "parameters": {
+                                                        },
+                                                        "variables": {
+                                                        },
+                                                        "resources": [
+                                                            {
+                                                                "type": "Microsoft.Insights/actionGroups",
+                                                                "apiVersion": "2018-03-01",
+                                                                "name": "[[parameters('ActionGroupName')]",
+                                                                "location": "Global",
+                                                                "properties": {
+                                                                    "groupShortName": "AMEAG",
+                                                                    "enabled": true,
+                                                                    "emailReceivers": [
+                                                                        {
+                                                                            "name": "Nuance",
+                                                                            "emailAddress": "[[parameters('EmailAddress')]"
+                                                                        },
+                                                                        {
+                                                                            "name": "AzureEYE",
+                                                                            "emailAddress": "devops2@contoso.com"
+                                                                        }
+                                                                    ],
+                                                                    "webhookReceivers": [
+                                                                        {
+                                                                            "name": "AzureEYEConnector",
+                                                                            "serviceUri": "https://s1events.azure-automation.net/webhooks?token=VjDhOvUWJpMSEbFnU%2bQgvmaUJS%2foZHA%2btlEzSKbdVQo%3d"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "outputs": {
+                                        }
+                                    },
+                                    "parameters": {
+                                        "ActionGroupName": {
+                                            "value": "[[parameters('ActionGroupName')]"
+                                        },
+                                        "EmailAddress": {
+                                            "value": "[[parameters('EmailAddress')]"
+                                        },
+                                        "rgName": {
+                                            "value": "[[parameters('rgName')]"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentName')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyDefinitionName')]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentName')]",
+                "displayName": "[variables('policyAssignmentName')]",
+                "scope": "[subscription().id]",
+                "policyDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/policyDefinitions/', variables('policyDefinitionName'))]",
+                "parameters": {
+                    "ActionGroupName": {
+                        "value": "[parameters('ActionGroupName')]"
+                    },
+                    "EmailAddress": {
+                        "value": "[parameters('EmailAddress')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "[concat('builtInDelay', copyIndex(), uniqueString(parameters('CopyGuid')))]",
+            "dependsOn": [
+                "[variables('policyAssignmentName')]"
+            ],
+            "copy": {
+                "name": "builtInDelayCopy",
+                "count": 9,
+                "mode": "Serial",
+                "batchSize": 1
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                    },
+                    "variables": {
+                    },
+                    "resources": [
+                    ],
+                    "outputs": {
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[parameters('rbacGuid')]",
+            "dependsOn": [
+                "[variables('policyAssignmentName')]",
+                "builtInDelayCopy"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentName')), '2018-05-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
