@@ -12,7 +12,7 @@
         },
         "EmailAddress": {
             "type": "string",
-            "defaultvalue": "noc@nuancehealthops.mygbiz.com",
+            "defaultvalue": "",
             "metadata": {
                 "displayName": "EmailID of Reciever",
                 "description": "Email Address of recievers"
@@ -62,7 +62,7 @@
                     },
                     "EmailAddress": {
                         "type": "string",
-                        "defaultvalue": "noc@nuancehealthops.mygbiz.com",
+                        "defaultvalue": "",
                         "metadata": {
                             "displayName": "emailaddress where you want the alert to go",
                             "description": "Email address of the alert receiver"
@@ -110,7 +110,7 @@
                                             },
                                             "EmailAddress": {
                                                 "type": "string",
-                                                "defaultValue": "noc@nuancehealthops.mygbiz.com"
+                                                "defaultValue": ""
                                             },
                                             "rgName": {
                                                 "type": "string",
