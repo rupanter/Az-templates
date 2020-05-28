@@ -33,6 +33,7 @@
         {
             "type": "Microsoft.Authorization/policySetDefinitions/",
             "apiVersion": "2018-03-01",
+            "location": "eastus",
             "name": "[variables('policyInitiativeName')]",
             "dependsOn": [
             ],
@@ -74,7 +75,7 @@
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
             "name": "[variables('policyAssignmentName')]",
-            "location": "[deployment().location]",
+            "location": "eastus",
             "dependsOn": [
                 "[variables('policyInitiativeName')]"
             ],
@@ -93,7 +94,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "location": "[deployment().location]",
+            "location": "eastus",
             "name": "[concat('builtInDelay', copyIndex(), uniqueString(parameters('CopyGuid')))]",
             "dependsOn": [
                 "[variables('policyAssignmentName')]"
