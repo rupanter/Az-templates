@@ -160,7 +160,7 @@
                                     },
                                     {
                                         "field": "Microsoft.Insights/metricalerts/scopes[*]",
-                                        "equals": "[[concat(subscription().Id, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Sql/servers/', first(skip(split(field('name'), '/'),0)), '/databases/',first(skip(split(field('name'), '/'),1)))]"
+                                        "equals": "[[concat(subscription().Id, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Sql/servers/', first(skip(split(field('fullname'), '/'),0)), '/databases/',first(skip(split(field('fullname'), '/'),1)))]"
                                     }
                                 ]
                             },
@@ -169,7 +169,7 @@
                                     "mode": "incremental",
                                     "parameters": {
                                         "StrName": {
-                                            "value": "[[field('name')]"
+                                            "value": "[[field('fullname')]"
                                         },
                                         "metricName": {
                                             "value": "[[parameters('metricName')]"
