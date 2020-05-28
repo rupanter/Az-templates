@@ -118,7 +118,7 @@
                     },
                     "actionGroupId": {
                         "type": "string",
-                        "defaultValue": "/subscriptions/f28f2c24-b393-4dda-b471-0ef3b69c0578/resourceGroups/Basictesting/providers/microsoft.insights/actiongroups/PolicyAG",
+                        "defaultValue": "/subscriptions/9ef102be-8e69-43a4-b2bb-63ec3670b7d2/resourceGroups/Default-Activitylogalerts/providers/microsoft.insights/actiongroups/AzureEye",
                         "metadata": {
                             "description": "The ID of the action group that is triggered when the alert is activated or deactivated"
                         }
@@ -129,7 +129,7 @@
                         "allOf": [
                             {
                                 "field": "type",
-                                "equals": "Microsoft.Sql/servers"
+                                "equals": "Microsoft.Sql/servers/databases"
                             },
                             {
                                 "field": "[[concat('tags[', parameters('tagName'), ']')]",
@@ -160,7 +160,7 @@
                                     },
                                     {
                                         "field": "Microsoft.Insights/metricalerts/scopes[*]",
-                                        "equals": "[[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Sql/servers/', field('Name'))]"
+                                        "equals": "[[concat(subscription().Id, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Sql/servers/', first(skip(split(field('name'), '/'),0)), '/databases/',first(skip(split(field('name'), '/'),1)))]"
                                     }
                                 ]
                             },
@@ -307,7 +307,7 @@
                                                     ],
                                                     "description": "[[concat('AME_',parameters('CustomerShortName'),'_SQL_DB_CONNECTION_FAIL_',parameters('StrName'))]",
                                                     "scopes": [
-                                                        "[[concat('/subscriptions/',subscription().subscriptionId,'/resourcegroups/',resourceGroup().name,'/providers/Microsoft.Sql/servers/',parameters('StrName'))]"
+                                                        "[[concat(subscription().Id, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Sql/servers/', first(skip(split(parameters('strname'), '/'),0)), '/databases/',first(skip(split(parameters('strname'), '/'),1)))]"
                                                     ],
                                                     "severity": 4,
                                                     "Enabled": "[[parameters('isEnabled')]",
