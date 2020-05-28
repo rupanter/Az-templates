@@ -156,7 +156,7 @@
                                     },
                                     {
                                         "field": "name",
-                                        "equals": "[[concat('AME_',parameters('CustomerShortName'),'_SQL_DB_DATA_IO_USAGE_',field('name'))]"
+                                        "equals": "[[concat('AME_',parameters('CustomerShortName'),'_SQL_DB_DATA_IO_USAGE_',first(skip(split(field('fullname'), '/'),1)))]"
                                     },
                                     {
                                         "field": "Microsoft.Insights/metricalerts/scopes[*]",
@@ -281,7 +281,7 @@
                                         },
                                         "resources": [
                                             {
-                                                "name": "[[concat('AME_',parameters('CustomerShortName'),'_SQL_DB_DATA_IO_USAGE_',parameters('StrName'))]",
+                                                "name": "[[concat('AME_',parameters('CustomerShortName'),'_SQL_DB_DATA_IO_USAGE_',first(skip(split(parameters('strname'), '/'),1)))]",
                                                 "tags": {
                                                 },
                                                 "properties": {
