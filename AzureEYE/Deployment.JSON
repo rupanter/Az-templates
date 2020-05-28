@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+        "Uri": {
+            "Resource": [
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-LB-DIP-AVAIL-DROP-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-LB-VIP-AVAIL-DROP-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-SQL-CON-FAIL-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-SQL-CPU-SPIKE-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-SQL-DATA-IO-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-SQL-DLOCK-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-SQL-DTU-SPIKE-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-STRG-AVAIL-DROP-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-VM-CPU-SPIKE-POLICY-TEMPLATE.JSON"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/rupanter/Az-templates/master/AzureEYE/AME-METRICS-DINE-POLICYSET-TEMPLATE.JSON"
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[concat('PolicyDeployment',copyIndex(),uniqueString('foo'))]",
+            "location": "East US",
+            "copy": {
+                "name": "PolicyCopy",
+                "count": "[length(variables('Uri').Resource)]",
+                "mode": "Serial"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('Uri').Resource[copyIndex()].url]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
