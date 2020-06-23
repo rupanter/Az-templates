@@ -58,8 +58,8 @@
                         "effect": "deployIfNotExists",
                         "details": {
                             "type": "Microsoft.Insights/activityLogAlerts",
-                            "deploymentScope": "resourceGroup",
-                            "existenceScope": "subscription",
+                            "deploymentScope": "Subscription",
+                            "existenceScope": "Subscription",
                             "roleDefinitionIds": [
                                 "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
                             ],
@@ -72,6 +72,10 @@
                                     {
                                         "field": "name",
                                         "equals": "[[concat('AME_',parameters('CustomerShortName'),'_RH_Alerts_V1')]"
+                                    },
+                                    {
+                                        "field": "Microsoft.Insights/activityLogAlerts/scopes[*]",
+                                        "equals": "[[concat('/subscriptions/', subscription().subscriptionId)]"
                                     }
                                 ]
                             },
