@@ -51,7 +51,7 @@
                     },
                     "Threshold": {
                         "type": "string",
-                        "defaultValue": "90"
+                        "defaultValue": "97"
                     },
                     "operator": {
                         "type": "string",

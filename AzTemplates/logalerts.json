@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Queries": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "WRG": "internalmonitoring",
+        "ARG": "AME_Stamp",
+        "AG": "internalmonitoring",
+        "WorkspaceName": "AMEInternalMonitoring",
+        "alertLocation": "eastus",
+        "alertSource": {
+            "SourceId": "[concat ('/subscriptions/', subscription().subscriptionId, '/resourceGroups/' , variables('WRG'), '/providers/microsoft.OperationalInsights/workspaces/', variables('WorkspaceName'))]"
+        },
+        "alertActions": {
+            "SuppressTimeinMin": 0
+        },
+        "actionGrp": {
+            "ActionGroup": "[concat ('/subscriptions/', subscription().subscriptionId, '/resourceGroups/' , variables('ARG'), '/providers/microsoft.insights/actionGroups/', variables('AG'))]"
+        }
+    },
+    "resources": [
+        {
+            "condition": "[equals(parameters('Queries').values[copyIndex()].deploy,'yes')]",
+            "name": "[concat('AS_', parameters('Queries').values[copyIndex()].customerShortName, parameters('Queries').values[copyIndex()].AlertName)]",
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "apiVersion": "2018-04-16",
+            "location": "[variables('alertLocation')]",
+            "copy": {
+                "name": "ActionGroupCopy",
+                "count": "[length(parameters('Queries').values)]"
+            },
+            "properties": {
+                "description": "[parameters('Queries').values[copyIndex()].description]",
+                "enabled": "[parameters('Queries').values[copyIndex()].enable]",
+                "source": {
+                    "query": "[concat('let SubList = datatable(sub:string) [', parameters('Queries').values[copyIndex()].SubscriptionIds,'];',parameters('Queries').values[copyIndex()].query)]",
+                    "dataSourceId": "[variables('alertSource').SourceId]",
+                    "queryType": "[parameters('Queries').values[copyIndex()].queryType]"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[parameters('Queries').values[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[parameters('Queries').values[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[parameters('Queries').values[copyIndex()].severity]",
+                    "throttlingInMin": "[variables('alertActions').SuppressTimeinMin]",
+                    "aznsAction": {
+                        "actionGroup": "[array(variables('actionGrp').ActionGroup)]",
+                        "emailSubject": "[concat('AzureSight_', parameters('Queries').values[copyIndex()].customerShortName, parameters('Queries').values[copyIndex()].emailSubject)]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[parameters('Queries').values[copyIndex()].thresholdOperator]",
+                        "threshold": "[parameters('Queries').values[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}
