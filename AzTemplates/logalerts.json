@@ -36,7 +36,7 @@
                 "description": "[parameters('Queries').values[copyIndex()].description]",
                 "enabled": "[parameters('Queries').values[copyIndex()].enable]",
                 "source": {
-                    "query": "[concat('let SubList = datatable(sub:string) [', parameters('Queries').values[copyIndex()].SubscriptionIds,'];',parameters('Queries').values[copyIndex()].query)]",
+                    "query": "[parameters('Queries').values[copyIndex()].query]",
                     "dataSourceId": "[variables('alertSource').SourceId]",
                     "queryType": "[parameters('Queries').values[copyIndex()].queryType]"
                 },
@@ -50,7 +50,7 @@
                     "throttlingInMin": "[variables('alertActions').SuppressTimeinMin]",
                     "aznsAction": {
                         "actionGroup": "[array(variables('actionGrp').ActionGroup)]",
-                        "emailSubject": "[concat('AzureSight_', parameters('Queries').values[copyIndex()].customerShortName, parameters('Queries').values[copyIndex()].emailSubject)]"
+                        "emailSubject": "[concat('AS_', parameters('Queries').values[copyIndex()].customerShortName, parameters('Queries').values[copyIndex()].emailSubject)]"
                     },
                     "trigger": {
                         "thresholdOperator": "[parameters('Queries').values[copyIndex()].thresholdOperator]",
