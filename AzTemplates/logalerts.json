@@ -24,7 +24,6 @@
     },
     "resources": [
         {
-            "condition": "[equals(parameters('Queries').values[copyIndex()].deploy,'yes')]",
             "name": "[concat('AS_', parameters('Queries').values[copyIndex()].customerShortName, parameters('Queries').values[copyIndex()].AlertName)]",
             "type": "Microsoft.Insights/scheduledQueryRules",
             "apiVersion": "2018-04-16",
