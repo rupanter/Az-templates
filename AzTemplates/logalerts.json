@@ -9,7 +9,7 @@
     "variables": {
         "WRG": "internalmonitoring",
         "ARG": "AME_Stamp",
-        "AG": "internalmonitoring",
+        "AG": "azuresight-action",
         "WorkspaceName": "AMEInternalMonitoring",
         "alertLocation": "eastus",
         "alertSource": {
@@ -24,7 +24,7 @@
     },
     "resources": [
         {
-            "name": "[concat('AS_', parameters('Queries').values[copyIndex()].customerShortName, parameters('Queries').values[copyIndex()].AlertName)]",
+            "name": "[parameters('Queries').values[copyIndex()].AlertName]",
             "type": "Microsoft.Insights/scheduledQueryRules",
             "apiVersion": "2018-04-16",
             "location": "[variables('alertLocation')]",
@@ -50,7 +50,7 @@
                     "throttlingInMin": "[variables('alertActions').SuppressTimeinMin]",
                     "aznsAction": {
                         "actionGroup": "[array(variables('actionGrp').ActionGroup)]",
-                        "emailSubject": "[concat('AS_', parameters('Queries').values[copyIndex()].customerShortName, parameters('Queries').values[copyIndex()].emailSubject)]"
+                        "emailSubject": "[concat('AS_', parameters('Queries').values[copyIndex()].customerShortName,'_', parameters('Queries').values[copyIndex()].emailSubject)]"
                     },
                     "trigger": {
                         "thresholdOperator": "[parameters('Queries').values[copyIndex()].thresholdOperator]",
