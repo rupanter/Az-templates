@@ -2,6 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "PolicyName": {
+            "type": "string",
+            "defaultValue": "AME-MONITOR"
+        }
     },
     "variables": {
         "policyDefinitionName": "AME-APPGW-5XX-DINE-METRICALERT"
@@ -106,10 +110,12 @@
                         }
                     },
                     "resourceType":{
-                        "type": "string"
+                        "type": "string",
+                        "defaultValue": ""
                     },
                     "alertName":{
-                        "type": "string"
+                        "type": "string",
+                        "defaultValue": ""
                     }
                 },
                 "PolicyRule": {
@@ -181,6 +187,12 @@
                                         },
                                         "severity": {
                                             "value": "[[parameters('severity')]"
+                                        },
+                                        "resourceType": {
+                                            "value": "[[parameters('resourceType')]"
+                                        },
+                                        "alertname": {
+                                            "value": "[[parameters('alertname')]"
                                         }
                                     },
                                     "template": {
@@ -259,6 +271,12 @@
                                             },
                                             "severity": {
                                                 "type": "string"
+                                            },
+                                            "resourceType": {
+                                                "type": "string"
+                                            },
+                                            "alertname": {
+                                                "type": "string"
                                             }
                                         },
                                         "variables": {
@@ -310,7 +328,6 @@
                     }
                 }
             }
-
         }
     ],
     "outputs": {
