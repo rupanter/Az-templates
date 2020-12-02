@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/managementGroupDeploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/subscriptiondeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "policyDefinitionName": {
@@ -149,7 +149,7 @@
                                     },
                                     {
                                         "field": "Microsoft.Insights/metricalerts/scopes[*]",
-                                        "equals": "[[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Network/applicationGateways/', field('Name'))]"
+                                        "equals": "[[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().name, '/providers/',parameters('resourceType'),'/', field('Name'))]"
                                     }
                                 ]
                             },
