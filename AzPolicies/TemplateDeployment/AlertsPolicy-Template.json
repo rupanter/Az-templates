@@ -2,21 +2,20 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "PolicyName": {
+        "policyDefinitionName": {
             "type": "string",
             "defaultValue": "AME-MONITOR"
         }
     },
     "variables": {
-        "policyDefinitionName": "AME-APPGW-5XX-DINE-METRICALERT"
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyDefinitions",
             "apiVersion": "2018-05-01",
-            "name": "[variables('policyDefinitionName')]",
+            "name": "[parameters('policyDefinitionName')]",
             "properties": {
-                "DisplayName": "[Concat(variables('policyDefinitionName'),'Policy')]",
+                "DisplayName": "[Concat(parameters('policyDefinitionName'),'Policy')]",
                 "mode": "Indexed",
                 "policyType": "Custom",
                 "parameters": {
