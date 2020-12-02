@@ -98,10 +98,6 @@
                             "description": "how often the metric alert is evaluated represented in ISO 8601 duration format"
                         }
                     },
-                    "CustomerShortName": {
-                        "type": "string",
-                        "defaultValue": "BLK"
-                    },
                     "actionGroupName": {
                         "type": "string",
                         "defaultValue": "AME-AG",
@@ -180,9 +176,6 @@
                                         "evaluationFrequency": {
                                             "value": "[[parameters('evaluationFrequency')]"
                                         },
-                                        "CustomerShortName": {
-                                            "value": "[[parameters('CustomerShortName')]"
-                                        },
                                         "actionGroupName": {
                                             "value": "[[parameters('actionGroupName')]"
                                         },
@@ -260,9 +253,6 @@
                                                 "metadata": {
                                                     "description": "how often the metric alert is evaluated represented in ISO 8601 duration format"
                                                 }
-                                            },
-                                            "CustomerShortName": {
-                                                "type": "string"
                                             },
                                             "actionGroupName": {
                                                 "type": "string"
